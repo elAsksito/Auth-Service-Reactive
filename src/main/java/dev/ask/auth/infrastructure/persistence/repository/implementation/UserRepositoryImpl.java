@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import dev.ask.auth.domain.repository.UserRepository;
 import dev.ask.auth.infrastructure.persistence.document.UserDocument;
 import dev.ask.auth.infrastructure.persistence.repository.interfaces.SpringDataUserRepository;
+import dev.ask.auth.shared.enums.Status;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +17,17 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Mono<UserDocument> createUser(String email, String password) {
-        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
+        UserDocument user = UserDocument.builder()
+                .email(email)
+                .password(password)
+                .isEmailVerified(false)
+                .status(Status.ACTIVE)
+                .failedLoginAttempts(0)
+                .twoFaEnabled(false)
+                .build();
+                user.prePersist();
+
+        return springDataUserRepository.save(user);
     }
 
     @Override

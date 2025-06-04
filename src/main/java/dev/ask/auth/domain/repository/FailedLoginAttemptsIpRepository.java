@@ -5,6 +5,4 @@ import reactor.core.publisher.Mono;
 
 public interface FailedLoginAttemptsIpRepository {
     Mono<FailedLoginAttemptsIpDocument> handleFailedLogin(String ipAddress);
-    Mono<FailedLoginAttemptsIpDocument> incrementFailedAttempts(String ipAddress);
-    Mono<FailedLoginAttemptsIpDocument> resetFailedAttempts(String ipAddress);
 }

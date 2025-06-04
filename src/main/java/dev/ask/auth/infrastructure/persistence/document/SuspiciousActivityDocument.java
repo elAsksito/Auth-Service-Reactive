@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import dev.ask.auth.shared.enums.Severity;
+import dev.ask.auth.shared.enums.SuspiciousActivityReason;
 import lombok.*;
 
 @Document(collection = "suspicious_activity")
@@ -31,7 +32,7 @@ public class SuspiciousActivityDocument {
     private String deviceFingerprint;
 
     @Field("reason")
-    private String reason;
+    private SuspiciousActivityReason reason;
 
     @Field("severity")
     private Severity severity;

@@ -9,5 +9,5 @@ import reactor.core.publisher.Mono;
 public interface SpringDataUserRepository extends ReactiveMongoRepository<UserDocument, String> {
     Mono<UserDocument> findByEmail(String email);
     Mono<Boolean> existsByEmail(String email);
-    Flux<UserDocument> findByRole(String role);
+    Flux<UserDocument> findByRolesContaining(String role);
 }

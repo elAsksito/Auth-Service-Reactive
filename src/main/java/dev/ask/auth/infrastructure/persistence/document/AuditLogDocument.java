@@ -1,12 +1,12 @@
 package dev.ask.auth.infrastructure.persistence.document;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import dev.ask.auth.shared.enums.Action;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,10 +25,10 @@ public class AuditLogDocument {
     private String userId;
 
     @Field("action")
-    private Action action;
+    private String action;
 
     @Field("metadata")
-    private String metadata;
+    private Map<String, Object> metadata;
 
     @Field("ip_address")
     private String ipAddress;

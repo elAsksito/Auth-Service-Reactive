@@ -1,6 +1,6 @@
 package dev.ask.auth.infrastructure.api.utils;
 
-import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 
 public class ExtractClientIp {
     public static String extractClientIp(ServerHttpRequest request) {

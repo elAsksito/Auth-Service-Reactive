@@ -1,6 +1,7 @@
 package dev.ask.auth.domain.repository;
 
 import dev.ask.auth.infrastructure.persistence.document.SuspiciousActivityDocument;
+import dev.ask.auth.shared.enums.SuspiciousActivityReason;
 import reactor.core.publisher.Mono;
 
 public interface SuspiciousActivityRepository {
@@ -9,5 +10,5 @@ public interface SuspiciousActivityRepository {
             String ipAddress,
             String userAgent,
             String fingerprint,
-            String reason);
+            SuspiciousActivityReason reason);
 }
