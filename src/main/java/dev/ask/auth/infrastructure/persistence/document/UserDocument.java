@@ -3,6 +3,7 @@ package dev.ask.auth.infrastructure.persistence.document;
 import dev.ask.auth.shared.enums.Status;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
@@ -65,7 +66,7 @@ public class UserDocument {
     private boolean mustChangePassword;
 
     @Field("roles")
-    private String[] roles;
+    private List<String> roles;
     
     public void prePersist() {
         createdAt = LocalDateTime.now();

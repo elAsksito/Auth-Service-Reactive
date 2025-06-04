@@ -1,6 +1,7 @@
 package dev.ask.auth.application.service.user;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import dev.ask.auth.domain.model.User;
 import dev.ask.auth.domain.repository.UserRepository;
@@ -34,7 +35,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
                 .updatedAt(LocalDateTime.now())
                 .version(1L)
                 .mustChangePassword(false)
-                .roles(new String[] { "USER" })
+                .roles(List.of("USER"))
                 .build();
 
         UserDocument userDocument = UserMapper.toDocument(user);

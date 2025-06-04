@@ -3,6 +3,7 @@ package dev.ask.auth.domain.model;
 import dev.ask.auth.shared.enums.Status;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
@@ -25,5 +26,5 @@ public class User {
     private long version;
     private LocalDateTime passwordLastChanged;
     private boolean mustChangePassword;
-    private String[] roles;
+    private List<String> roles;
 }
