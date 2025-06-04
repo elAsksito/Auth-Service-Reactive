@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.ask.auth.application.payload.request.RegisterRequest;
 import dev.ask.auth.domain.model.User;
 import dev.ask.auth.domain.service.user.RegisterUserService;
 import dev.ask.auth.infrastructure.api.utils.ExtractClientIp;
-import dev.ask.auth.shared.payload.request.LoginRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -22,7 +22,7 @@ public class RegisterController {
     private final RegisterUserService registerUserService;
 
     @PostMapping("/register")
-    Mono<User> createUserWithEmailAndPassword(@Valid @RequestBody LoginRequest request,
+    Mono<User> createUserWithEmailAndPassword(@Valid @RequestBody RegisterRequest request,
             ServerHttpRequest httpRequest) {
         String ipAddress = ExtractClientIp.extractClientIp(httpRequest);
         String userAgent = httpRequest.getHeaders().getFirst("User-Agent");

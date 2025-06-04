@@ -1,4 +1,4 @@
-package dev.ask.auth.config;
+package dev.ask.auth.config.security;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

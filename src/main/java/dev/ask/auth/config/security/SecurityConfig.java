@@ -1,4 +1,4 @@
-package dev.ask.auth.config;
+package dev.ask.auth.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
