@@ -9,7 +9,9 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import dev.ask.auth.infrastructure.persistence.document.UserDocument;
+import dev.ask.auth.domain.model.User;
+import dev.ask.auth.domain.service.session.IsSessionValidService;
+import dev.ask.auth.domain.service.user.FindUserByIdService;
 import dev.ask.auth.infrastructure.security.utils.TokenExpiration;
 import dev.ask.auth.shared.exception.auth_exceptions.InvalidJwtTokenException;
 import io.jsonwebtoken.Claims;
@@ -23,35 +25,38 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class JwtService {
 
-    // private final IsSessionValidService sessionValidService;
+    private final IsSessionValidService sessionValidService;
+    private final FindUserByIdService findUserByIdService;
     private final PrivateKey jwtPrivateKey;
     private final PublicKey jwtPublicKey;
 
-    public Mono<String> generateToken(UserDocument user, String ipAddress, String userAgent) {
+    public Mono<String> generateToken(String userId, String ipAddress, String userAgent) {
         String sessionId = UUID.randomUUID().toString();
-
-        String token = Jwts.builder()
-                .subject(user.getId())
-                .issuedAt(new Date())
-                .expiration(Date.from(Instant.now().plusSeconds(TokenExpiration.ACCESS.getSeconds())))
-                .claims(Map.of(
-                        "email", user.getEmail(),
-                        "roles", user.getRoles(),
-                        "sessionId", sessionId))
-                .signWith(jwtPrivateKey)
-                .compact();
-
-        return Mono.just(token);
+        return getUserById(userId).map(user -> {
+            String token = Jwts.builder()
+                    .subject(user.getId())
+                    .issuedAt(new Date())
+                    .expiration(Date.from(Instant.now().plusSeconds(TokenExpiration.ACCESS.getSeconds())))
+                    .claims(Map.of(
+                            "email", user.getEmail(),
+                            "roles", user.getRoles(),
+                            "sessionId", sessionId))
+                    .signWith(jwtPrivateKey)
+                    .compact();
+            return token;
+        });
     }
 
-    public Mono<String> generateRefreshToken(UserDocument user) {
-        String token = Jwts.builder()
-                .subject(user.getId())
-                .issuedAt(new Date())
-                .expiration(Date.from(Instant.now().plusSeconds(TokenExpiration.REFRESH.getSeconds())))
-                .signWith(jwtPrivateKey)
-                .compact();
-        return Mono.just(token);
+    public Mono<String> generateRefreshToken(String userId) {
+        return getUserById(userId).map(user -> {
+            String token = Jwts.builder()
+                    .subject(user.getId())
+                    .issuedAt(new Date())
+                    .expiration(Date.from(Instant.now().plusSeconds(TokenExpiration.REFRESH.getSeconds())))
+                    .signWith(jwtPrivateKey)
+                    .compact();
+            return token;
+        });
     }
 
     public Mono<Boolean> isTokenValid(String token) {
@@ -62,13 +67,11 @@ public class JwtService {
                 log.warn("Token no tiene sessionId");
                 return Mono.error(new InvalidJwtTokenException());
             }
-
-            return Mono.just(false);
-            // return sessionValidService.isSessionValid(sessionId, token)
-            //         .onErrorResume(e -> {
-            //             log.error("Error validando token: {}", e.getMessage());
-            //             return Mono.just(false);
-            //         });
+            return sessionValidService.isSessionValid(sessionId, token)
+                    .onErrorResume(e -> {
+                        log.error("Error validando token: {}", e.getMessage());
+                        return Mono.just(false);
+                    });
 
         } catch (Exception e) {
             log.error("Error parsing JWT: {}", e.getMessage());
@@ -82,5 +85,9 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    private Mono<User> getUserById(String userId) {
+        return findUserByIdService.findById(userId);
     }
 }

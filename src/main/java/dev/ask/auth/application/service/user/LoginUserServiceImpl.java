@@ -16,10 +16,8 @@ public class LoginUserServiceImpl implements LoginUserService {
 
     @Override
     public Mono<User> loginUserWithEmailAndPassword(LoginRequest request, String ipAddress, String userAgent) {
-
         Email email = new Email(request.getEmail());
         Password password = new Password(request.getPassword());
-
         return userRepository.loginUser(email.value(), password.value()).map(UserMapper::toDomain);
     }
 }
