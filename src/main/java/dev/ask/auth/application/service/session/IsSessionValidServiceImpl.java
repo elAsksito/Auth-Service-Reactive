@@ -10,7 +10,7 @@ public class IsSessionValidServiceImpl implements IsSessionValidService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public Mono<Boolean> isSessionValid(String userId, String accessToken) {
+    public Mono<Boolean> isSessionValid(String userId, String refreshToken) {
         return sessionRepository.isSessionActive(userId);
     }
 }

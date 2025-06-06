@@ -10,4 +10,5 @@ public interface SpringDataSessionRepository extends ReactiveMongoRepository<Ses
     Mono<SessionDocument> findByUserIdAndIsRevokedFalse(String userId);
     Mono<SessionDocument> findByUserIdAndSessionTokenHashAndIsRevokedFalse(String userId, byte[] sessionTokenHash);
     Flux<SessionDocument> findAllByUserIdAndIsRevokedFalse(String userId);
+    Mono<SessionDocument> findByUserIdAndIpAddressAndUserAgentAndIsRevokedFalse(String userId, String ipAddress, String userAgent);
 }

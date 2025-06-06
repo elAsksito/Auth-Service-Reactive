@@ -5,13 +5,13 @@ import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import dev.ask.auth.domain.model.User;
 import dev.ask.auth.domain.service.session.IsSessionValidService;
 import dev.ask.auth.domain.service.user.FindUserByIdService;
+import dev.ask.auth.domain.vo.AccessTokenWithSession;
 import dev.ask.auth.infrastructure.security.utils.TokenExpiration;
 import dev.ask.auth.shared.exception.auth_exceptions.InvalidJwtTokenException;
 import io.jsonwebtoken.Claims;
@@ -30,8 +30,7 @@ public class JwtService {
     private final PrivateKey jwtPrivateKey;
     private final PublicKey jwtPublicKey;
 
-    public Mono<String> generateToken(String userId, String ipAddress, String userAgent) {
-        String sessionId = UUID.randomUUID().toString();
+    public Mono<AccessTokenWithSession> generateToken(String userId, String sessionId, String ipAddress, String userAgent) {
         return getUserById(userId).map(user -> {
             String token = Jwts.builder()
                     .subject(user.getId())
@@ -43,16 +42,18 @@ public class JwtService {
                             "sessionId", sessionId))
                     .signWith(jwtPrivateKey)
                     .compact();
-            return token;
+            return new AccessTokenWithSession(token, sessionId);
         });
     }
 
-    public Mono<String> generateRefreshToken(String userId) {
+    public Mono<String> generateRefreshToken(String userId, String sessionId) {
         return getUserById(userId).map(user -> {
             String token = Jwts.builder()
                     .subject(user.getId())
                     .issuedAt(new Date())
                     .expiration(Date.from(Instant.now().plusSeconds(TokenExpiration.REFRESH.getSeconds())))
+                    .claims(Map.of(
+                            "sessionId", sessionId))
                     .signWith(jwtPrivateKey)
                     .compact();
             return token;

@@ -11,8 +11,8 @@ public class CreateSessionServiceImpl implements CreateSessionService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public Mono<Void> createSession(String userId, String sessionId, String accessToken, String ipAddress,
+    public Mono<Void> createSession(String userId, String sessionId, String refreshToken, String ipAddress,
             String userAgent) {
-        return sessionRepository.createSession(userId, sessionId, accessToken, ipAddress, userAgent);
+        return sessionRepository.createSession(userId, sessionId, refreshToken, ipAddress, userAgent);
     }
 }

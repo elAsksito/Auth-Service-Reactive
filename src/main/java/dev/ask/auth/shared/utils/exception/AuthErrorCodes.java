@@ -73,7 +73,12 @@ public enum AuthErrorCodes {
                         "AUTH-014",
                         "https://docs.ask.com/errors/AUTH-014",
                         "Cuenta Expirada",
-                        "La cuenta de usuario ha expirado. Por favor, contacta al administrador.");
+                        "La cuenta de usuario ha expirado. Por favor, contacta al administrador."),
+        USER_ALREADY_EXISTS(
+                        "AUTH-015",
+                        "https://docs.ask.com/errors/AUTH-015",
+                        "Usuario Ya Existe",
+                        "Ya existe una cuenta con el correo electrónico proporcionado."),;
 
         private final String code;
         private final String uri;

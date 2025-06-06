@@ -1,7 +1,6 @@
 package dev.ask.auth.infrastructure.persistence.repository.implementation;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +8,7 @@ import dev.ask.auth.domain.repository.FailedLoginAttemptsIpRepository;
 import dev.ask.auth.domain.repository.IpBlockRepository;
 import dev.ask.auth.infrastructure.persistence.document.FailedLoginAttemptsIpDocument;
 import dev.ask.auth.infrastructure.persistence.repository.interfaces.SpringDataFailedLoginAttemptsIpRepository;
+import dev.ask.auth.shared.enums.BlockTime;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -22,6 +22,8 @@ public class FailedLoginAttemptsIpRepositoryImpl implements FailedLoginAttemptsI
     @Override
     public Mono<FailedLoginAttemptsIpDocument> handleFailedLogin(String ipAddress) {
         Instant now = Instant.now();
+        BlockTime blockDuration = BlockTime.MINUTE;
+        Instant blockedUntil = now.plusSeconds(blockDuration.getSeconds());
 
         return repository.findById(ipAddress)
                 .flatMap(existing -> {
@@ -40,10 +42,9 @@ public class FailedLoginAttemptsIpRepositoryImpl implements FailedLoginAttemptsI
                     existing.prePersist();
 
                     if (existing.getAttempts() >= 5) {
-                        Instant blockedUntil = now.plus(15, ChronoUnit.MINUTES);
                         existing.setBlockedUntil(blockedUntil);
 
-                        return ipBlockRepository.blockIp(ipAddress, 15, "Demasiados intentos fallidos")
+                        return ipBlockRepository.blockIp(ipAddress, blockDuration.getSeconds(), "Demasiados intentos fallidos")
                                 .then(repository.save(existing));
                     }
 
@@ -56,4 +57,20 @@ public class FailedLoginAttemptsIpRepositoryImpl implements FailedLoginAttemptsI
                                 .lastAttempt(now)
                                 .build()));
     }
+
+    @Override
+    public Mono<Void> checkAndUnblockIfExpired(String ipAddress) {
+    Instant now = Instant.now();
+    return repository.findById(ipAddress)
+            .flatMap(existing -> {
+                if (existing.getBlockedUntil() != null && existing.getBlockedUntil().isBefore(now)) {
+                    existing.setAttempts(1);
+                    existing.setBlockedUntil(null);
+                    return ipBlockRepository.unblockIp(ipAddress)
+                            .then(repository.save(existing))
+                            .then();
+                }
+                return Mono.empty();
+            });
+        }
 }

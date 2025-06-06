@@ -11,7 +11,7 @@ public class RevokeSessionServiceImpl implements RevokeSessionService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public Mono<Void> revokeSession(String userId) {
-        return sessionRepository.revokeSession(userId);
+    public Mono<Void> revokeSession(String userId, String ipAddress, String userAgent) {
+        return sessionRepository.revokeSession(userId, ipAddress, userAgent);
     }
 }

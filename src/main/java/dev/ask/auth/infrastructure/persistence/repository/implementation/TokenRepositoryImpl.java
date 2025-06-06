@@ -41,4 +41,16 @@ public class TokenRepositoryImpl implements TokenRepository {
 
         return repository.save(document);
     }
+
+    @Override
+    public Mono<Boolean> existsActiveTokenForDevice(String userId, String ipAddress, String userAgent) {
+        return repository.existsByUserIdAndIpAddressAndUserAgentAndIsRevokedFalse(userId, ipAddress, userAgent);
+    }
+
+    @Override
+    public Mono<TokenDocument> findFirstByUserIdAndIpAddressAndUserAgentAndIsRevokedFalseOrderByCreatedAtDesc(
+            String userId, String ipAddress, String userAgent) {
+        return repository.findFirstByUserIdAndIpAddressAndUserAgentAndIsRevokedFalseOrderByCreatedAtDesc(
+                userId, ipAddress, userAgent);
+    }
 }

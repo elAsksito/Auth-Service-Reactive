@@ -58,8 +58,8 @@ public class SessionRepositoryImpl implements SessionRepository {
     }
 
     @Override
-    public Mono<Void> revokeSession(String userId) {
-        return repository.findByUserIdAndIsRevokedFalse(userId)
+    public Mono<Void> revokeSession(String userId, String ipAddress, String userAgent) {
+        return repository.findByUserIdAndIpAddressAndUserAgentAndIsRevokedFalse(userId, ipAddress, userAgent)
                 .flatMap(session -> {
                     session.setRevoked(true);
                     session.setRevokedAt(Instant.now());
@@ -87,5 +87,10 @@ public class SessionRepositoryImpl implements SessionRepository {
                     return repository.save(session);
                 })
                 .then();
+    }
+
+    @Override
+    public Mono<SessionDocument> getExistingSession(String userId, String ipAddress, String userAgent) {
+        return repository.findByUserIdAndIpAddressAndUserAgentAndIsRevokedFalse(userId, ipAddress, userAgent);
     }
 }

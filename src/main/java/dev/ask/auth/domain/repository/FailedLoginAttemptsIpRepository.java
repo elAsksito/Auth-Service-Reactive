@@ -5,4 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface FailedLoginAttemptsIpRepository {
     Mono<FailedLoginAttemptsIpDocument> handleFailedLogin(String ipAddress);
+    Mono<Void> checkAndUnblockIfExpired(String ipAddress);
 }

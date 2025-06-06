@@ -29,5 +29,4 @@ public class AuditLogRepositoryImpl implements AuditLogRepository {
         auditLogDocument.prePersist();
         return springDataAuditLogRepository.save(auditLogDocument);
     }
-
 }
