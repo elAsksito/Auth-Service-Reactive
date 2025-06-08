@@ -8,6 +8,7 @@ import dev.ask.auth.application.payload.request.RegisterRequest;
 import dev.ask.auth.domain.model.User;
 import dev.ask.auth.domain.repository.UserRepository;
 import dev.ask.auth.domain.service.audit_log.CreateAuditLogService;
+import dev.ask.auth.domain.service.email.SendWelcomeEmailService;
 import dev.ask.auth.domain.service.password_history.SavePasswordHistoryService;
 import dev.ask.auth.domain.service.user.RegisterUserService;
 import dev.ask.auth.domain.vo.Email;
@@ -24,7 +25,8 @@ public class RegisterUserServiceImpl implements RegisterUserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final SavePasswordHistoryService savePasswordHistoryService;
-    private final CreateAuditLogService createAuditLogService; 
+    private final CreateAuditLogService createAuditLogService;
+    private final SendWelcomeEmailService sendWelcomeEmailService;
 
     @Override
     public Mono<User> createUserWithEmailAndPassword(RegisterRequest request, String ipAddress, String userAgent) {
@@ -60,7 +62,8 @@ public class RegisterUserServiceImpl implements RegisterUserService {
                                                     "email", email.value(),
                                                     "action", Action.REGISTER.toString(),
                                                     "ipAddress", ipAddress,
-                                                    "userAgent", userAgent)))
+                                                    "userAgent", userAgent)),
+                                                    sendWelcomeEmailService.sendWelcomeEmail(email.value()))
                                     .thenReturn(UserMapper.toDomain(userDocument)))
                             .switchIfEmpty(
                                     createAuditLogService.save(

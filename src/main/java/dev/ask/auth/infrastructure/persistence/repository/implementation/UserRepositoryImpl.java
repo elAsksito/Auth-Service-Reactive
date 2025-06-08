@@ -55,4 +55,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Mono<Boolean> existsByEmail(String email) {
         return springDataUserRepository.existsByEmail(email);
     }
+
+    @Override
+    public Mono<UserDocument> findByEmail(String email) {
+        return springDataUserRepository.findByEmail(email);
+    }
 }

@@ -9,4 +9,5 @@ public interface UserRepository {
     Mono<UserDocument> findById(String userId);
     Mono<Boolean> existsByEmail(String email);
     Mono<UserDocument> updateUser(String userId, UserDocument userDocument);
+    Mono<UserDocument> findByEmail(String email);
 }

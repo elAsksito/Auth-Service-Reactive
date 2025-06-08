@@ -8,6 +8,7 @@
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-green?style=for-the-badge&logo=spring-boot)](https://spring.io/projects/spring-boot)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Reactive-green?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
 [![JWT](https://img.shields.io/badge/JWT-Security-orange?style=for-the-badge&logo=jsonwebtokens)](https://jwt.io/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/elAsksito/Auth-Service-Reactive)
 
 </div>
 

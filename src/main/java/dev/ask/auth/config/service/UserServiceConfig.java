@@ -7,9 +7,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import dev.ask.auth.application.service.user.FindUserByIdServiceImpl;
 import dev.ask.auth.application.service.user.LoginUserServiceImpl;
 import dev.ask.auth.application.service.user.RegisterUserServiceImpl;
+import dev.ask.auth.application.service.user.ResetPasswordServiceImpl;
 import dev.ask.auth.application.service.user.UpdateUserServiceImpl;
 import dev.ask.auth.domain.repository.UserRepository;
 import dev.ask.auth.domain.service.audit_log.CreateAuditLogService;
+import dev.ask.auth.domain.service.email.SendNewPasswordService;
+import dev.ask.auth.domain.service.email.SendWelcomeEmailService;
 import dev.ask.auth.domain.service.failed_login_attempts_ip.CheckAndUnblockIfExpiredService;
 import dev.ask.auth.domain.service.failed_login_attempts_ip.HandleFailedLoginService;
 import dev.ask.auth.domain.service.ip_block.IsIpBlockedService;
@@ -24,6 +27,7 @@ import dev.ask.auth.domain.service.token.SaveTokenService;
 import dev.ask.auth.domain.service.user.FindUserByIdService;
 import dev.ask.auth.domain.service.user.LoginUserService;
 import dev.ask.auth.domain.service.user.RegisterUserService;
+import dev.ask.auth.domain.service.user.ResetPasswordService;
 import dev.ask.auth.domain.service.user.UpdateUserService;
 
 @Configuration
@@ -51,13 +55,22 @@ public class UserServiceConfig {
 
     @Bean
     RegisterUserService registerUserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-            SavePasswordHistoryService savePasswordHistoryService, CreateAuditLogService createAuditLogService) {
+            SavePasswordHistoryService savePasswordHistoryService, CreateAuditLogService createAuditLogService,
+            SendWelcomeEmailService sendWelcomeEmailService) {
         return new RegisterUserServiceImpl(userRepository, passwordEncoder, savePasswordHistoryService,
-                createAuditLogService);
+                createAuditLogService, sendWelcomeEmailService);
     }
 
     @Bean
     UpdateUserService updateUserService(UserRepository userRepository) {
         return new UpdateUserServiceImpl(userRepository);
+    }
+
+    @Bean
+    ResetPasswordService resetPasswordService(UserRepository userRepository,
+            BCryptPasswordEncoder passwordEncoder, SendNewPasswordService sendNewPasswordService,
+            SavePasswordHistoryService savePasswordHistoryService) {
+        return new ResetPasswordServiceImpl(userRepository, passwordEncoder, sendNewPasswordService,
+                savePasswordHistoryService);
     }
 }

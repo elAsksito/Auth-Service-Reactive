@@ -12,7 +12,7 @@ public class SecurityConfig {
     SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) throws Exception {
         return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
-                        .pathMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                        .pathMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/reset-password").permitAll()
                         .anyExchange().authenticated())
                 .build();
     }
